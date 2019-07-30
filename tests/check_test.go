@@ -71,4 +71,19 @@ var _ = Describe("Check", func() {
 
 		Expect(session.Out).To(gbytes.Say(`{"digest":`))
 	})
+
+	It("fast fail on aws secret access key is missing", func(){
+		session := check(map[string]interface{}{
+			"source": map[string]interface{}{				
+				"repository": "888888888888.dkr.ecr.us-west-1.amazonaws.com/test-001",
+				"aws_access_key_id": "ABCDEFGHIJKLMN123456",
+				"aws_secret_access_key_MISSED": "rALBbEXl2Xx+5ziW6K7eql1kPmlksN41reuXGWUu",
+				"tag_as_latest": "latest",
+			},
+		})
+
+		expectedStringInError := fmt.Sprintf("missing aws_secret_access_key.")
+		Expect(session.Err).To(gbytes.Say(expectedStringInError))
+
+	})
 })

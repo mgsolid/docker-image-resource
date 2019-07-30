@@ -41,6 +41,10 @@ func main() {
 	err = json.NewDecoder(os.Stdin).Decode(&request)
 	fatalIf("failed to read request", err)
 
+	if len(request.Source.AWSAccessKeyID) > 0 && len(request.Source.AWSSecretAccessKey) == 0 && len(request.Source.AWSSessionToken) == 0 {
+		fatal("missing aws_secret_access_key.")
+	}
+
 	os.Setenv("AWS_ACCESS_KEY_ID", request.Source.AWSAccessKeyID)
 	os.Setenv("AWS_SECRET_ACCESS_KEY", request.Source.AWSSecretAccessKey)
 	os.Setenv("AWS_SESSION_TOKEN", request.Source.AWSSessionToken)
